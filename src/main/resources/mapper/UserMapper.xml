@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.young.community.dao.UserDao">
+    <sql id="base_table">user</sql>
+    <sql id="base_column">ID,NAME,ACCOUNT_ID,TOKEN,GMT_CREATE,GMT_MODIFIED</sql>
+    <!--插入用户-->
+    <insert id="insertUser" parameterType="com.young.community.model.User" useGeneratedKeys="true">
+        insert into user(
+            NAME,ACCOUNT_ID,TOKEN,GMT_CREATE,GMT_MODIFIED)
+        values(
+            #{name},#{accountId},#{token},#{gmtCreate},#{gmtModified})
+    </insert>
+    <!--查找-->
+    <select id="findByToken" resultType="com.young.community.model.User">
+        select <include refid="base_column"/> from user where token = #{token}
+    </select>
+</mapper>
