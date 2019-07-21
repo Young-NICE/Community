@@ -1,9 +1,8 @@
 package com.young.community.controller;
 
-import com.sun.deploy.net.HttpResponse;
+import com.young.community.dao.UserDao;
 import com.young.community.dto.AccessTokenDTO;
 import com.young.community.dto.GithubUser;
-import com.young.community.dao.UserDao;
 import com.young.community.model.User;
 import com.young.community.provider.GithubProvider;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,8 +12,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.UUID;
 
@@ -43,7 +40,6 @@ public class AuthorizeController {
     @GetMapping("/callback")
     public String callback(@RequestParam(name = "code") String code,
                            @RequestParam(name = "state") String state,
-                           HttpServletRequest request,
                            HttpServletResponse response){
         AccessTokenDTO accessTokenDTO = new AccessTokenDTO();
         accessTokenDTO.setClient_id(clientID);
@@ -63,11 +59,11 @@ public class AuthorizeController {
             user.setAccountId(String.valueOf(githubUser.getId()));
             user.setGmtCreate(System.currentTimeMillis());
             user.setGmtModified(user.getGmtCreate());
+            user.setAvatarUrl(githubUser.getAvatar_url());
             userDao.insertUser(user);
             //登录成功，写cookie和session
             //将token放到cookie中
             response.addCookie(new Cookie("token",token));
-            request.getSession().setAttribute("user",githubUser);
             return "redirect:/";
         }else {
             //登录失败，重新登录
