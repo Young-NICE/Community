@@ -95,4 +95,17 @@ public class QuestionService {
         questionDTO.setUser(userDao.findById(question.getCreator()));
         return questionDTO;
     }
+
+    public void createOrUpdate(Question question) {
+        if (question.getId() == null){
+            //创建问题
+            question.setGmtCreate(System.currentTimeMillis());
+            question.setGmtModified(question.getGmtCreate());
+            questionDao.create(question);
+        } else {
+            //更新
+            question.setGmtModified(System.currentTimeMillis());
+            questionDao.update(question);
+        }
+    }
 }
